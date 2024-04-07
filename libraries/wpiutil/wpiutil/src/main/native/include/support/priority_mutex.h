@@ -13,7 +13,7 @@
 #endif
 
 #include <mutex>
-# define __PTHREAD_SPINS         0, 0
+#define __PTHREAD_SPINS         0, 0
 
 namespace wpi {
 
