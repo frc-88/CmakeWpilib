@@ -13,15 +13,13 @@
 #endif
 
 #include <mutex>
+#define __PTHREAD_SPINS 0, 0
 
 namespace wpi
 {
 #ifdef __linux__
 
 #define WPI_HAVE_PRIORITY_MUTEX 1
-
-pthread_mutex_t DEFAULT_MUTEX_1 = { { 0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, 0, { 0, 0 } } };
-pthread_mutex_t DEFAULT_MUTEX_2 = { { 0, 0, 0, 0x20, 0, { 0, 0 } } };
 
 class priority_recursive_mutex
 {
@@ -56,7 +54,7 @@ public:
   }
 
 private:
-  pthread_mutex_t m_mutex = DEFAULT_MUTEX_1;
+  pthread_mutex_t m_mutex = { { 0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, 0, 0, { 0, 0 } } };
 };
 
 class priority_mutex
@@ -93,7 +91,7 @@ public:
 
 private:
   // Do the equivalent of setting PTHREAD_PRIO_INHERIT.
-  pthread_mutex_t m_mutex = DEFAULT_MUTEX_2;
+  pthread_mutex_t m_mutex = { { 0, 0, 0, 0x20, 0, 0, { 0, 0 } } };
 };
 
 #endif  // __linux__
