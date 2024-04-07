@@ -13,16 +13,16 @@
 #endif
 
 #include <mutex>
-#define __PTHREAD_SPINS         0, 0
 
-namespace wpi {
-
+namespace wpi
+{
 #ifdef __linux__
 
 #define WPI_HAVE_PRIORITY_MUTEX 1
 
-class priority_recursive_mutex {
- public:
+class priority_recursive_mutex
+{
+public:
   typedef pthread_mutex_t* native_handle_type;
 
   constexpr priority_recursive_mutex() noexcept = default;
@@ -30,30 +30,35 @@ class priority_recursive_mutex {
   priority_recursive_mutex& operator=(const priority_recursive_mutex&) = delete;
 
   // Lock the mutex, blocking until it's available.
-  void lock() { pthread_mutex_lock(&m_mutex); }
+  void lock()
+  {
+    pthread_mutex_lock(&m_mutex);
+  }
 
   // Unlock the mutex.
-  void unlock() { pthread_mutex_unlock(&m_mutex); }
+  void unlock()
+  {
+    pthread_mutex_unlock(&m_mutex);
+  }
 
   // Tries to lock the mutex.
-  bool try_lock() noexcept { return !pthread_mutex_trylock(&m_mutex); }
+  bool try_lock() noexcept
+  {
+    return !pthread_mutex_trylock(&m_mutex);
+  }
 
-  pthread_mutex_t* native_handle() { return &m_mutex; }
+  pthread_mutex_t* native_handle()
+  {
+    return &m_mutex;
+  }
 
- private:
-// Do the equivalent of setting PTHREAD_PRIO_INHERIT and
-// PTHREAD_MUTEX_RECURSIVE_NP.
-#ifdef __PTHREAD_MUTEX_HAVE_PREV
-  pthread_mutex_t m_mutex = {
-      {0, 0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, __PTHREAD_SPINS, {0, 0}}};
-#else
-  pthread_mutex_t m_mutex = {
-      {0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, 0, {__PTHREAD_SPINS}}};
-#endif
+private:
+  pthread_mutex_t m_mutex = { { 0, 0, 0, 0x20 | PTHREAD_MUTEX_RECURSIVE_NP, 0, { 0, 0 } } };
 };
 
-class priority_mutex {
- public:
+class priority_mutex
+{
+public:
   typedef pthread_mutex_t* native_handle_type;
 
   constexpr priority_mutex() noexcept = default;
@@ -61,23 +66,31 @@ class priority_mutex {
   priority_mutex& operator=(const priority_mutex&) = delete;
 
   // Lock the mutex, blocking until it's available.
-  void lock() { pthread_mutex_lock(&m_mutex); }
+  void lock()
+  {
+    pthread_mutex_lock(&m_mutex);
+  }
 
   // Unlock the mutex.
-  void unlock() { pthread_mutex_unlock(&m_mutex); }
+  void unlock()
+  {
+    pthread_mutex_unlock(&m_mutex);
+  }
 
   // Tries to lock the mutex.
-  bool try_lock() noexcept { return !pthread_mutex_trylock(&m_mutex); }
+  bool try_lock() noexcept
+  {
+    return !pthread_mutex_trylock(&m_mutex);
+  }
 
-  pthread_mutex_t* native_handle() { return &m_mutex; }
+  pthread_mutex_t* native_handle()
+  {
+    return &m_mutex;
+  }
 
- private:
-// Do the equivalent of setting PTHREAD_PRIO_INHERIT.
-#ifdef __PTHREAD_MUTEX_HAVE_PREV
-  pthread_mutex_t m_mutex = {{0, 0, 0, 0, 0x20, __PTHREAD_SPINS, {0, 0}}};
-#else
-  pthread_mutex_t m_mutex = {{0, 0, 0, 0x20, 0, {__PTHREAD_SPINS}}};
-#endif
+private:
+  // Do the equivalent of setting PTHREAD_PRIO_INHERIT.
+  pthread_mutex_t m_mutex = { { 0, 0, 0, 0x20, 0, { 0, 0 } } };
 };
 
 #endif  // __linux__
